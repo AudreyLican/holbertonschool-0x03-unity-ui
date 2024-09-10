@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,15 +12,25 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody rb;
 
-    // for collecting coin
     private int score = 0;
 
     // player health
     public int health = 5;
+    public TMP_Text scoreText;
+    public TMP_Text healthText;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+    }
+
+    void Update()
+    {
+        if (health == 0)
+        {
+            Debug.Log("Game Over!");
+            SceneManager.LoadScene(0);
+        }
     }
 
     // Update is called once per frame
@@ -32,6 +45,7 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(move * speed);
     }
 
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Pickup")
@@ -39,17 +53,21 @@ public class PlayerController : MonoBehaviour
             // increment the value score when the player touch an object tagged Pickup
             score++;
 
-            // Outpt Debug.Log()
-            Debug.Log("Score: " + score);
-
             //disabled object after the player touch it
             Destroy(other.gameObject);
+
+            // update scoreboard
+            SetScoreText();
+
+            // Outpt Debug.Log()
+            //Debug.Log("Score: " + score);
         }
 
         if (other.tag == "Trap")
         {
             health--;
-            Debug.Log("Health: " + health);
+            SetHealthText();
+            //Debug.Log("Health: " + health);
         }
 
         if (other.tag == "Goal")
@@ -58,12 +76,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void Update()
+    /// <summary>
+    /// this method display the player score
+    /// </summary>
+    void SetScoreText()
     {
-        if (health == 0)
-        {
-            Debug.Log("Game Over!");
-            SceneManager.LoadScene(0);
-        }
+        scoreText.text = $"Score: {score}";
+    }
+
+    /// <summary>
+    /// Method that display the player health
+    /// </summary>
+    void SetHealthText()
+    {
+        healthText.text = $"Health: {health}";
     }
 }
