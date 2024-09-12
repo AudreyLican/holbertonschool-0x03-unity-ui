@@ -11,13 +11,17 @@ public class PlayerController : MonoBehaviour
     public float speed;
 
     private Rigidbody rb;
-
+    // Collecting coin
     private int score = 0;
 
     // player health
-    public int health = 5;
+    public int health = 6;
+
+    // Player display : UI elements for score and health
     public TMP_Text scoreText;
     public TMP_Text healthText;
+    public TMP_Text winLoseText;
+    public Image winLoseBG;
 
     void Start()
     {
@@ -28,8 +32,13 @@ public class PlayerController : MonoBehaviour
     {
         if (health == 0)
         {
-            Debug.Log("Game Over!");
-            SceneManager.LoadScene(0);
+            winLoseBG.gameObject.SetActive(true);
+            winLoseBG.color = Color.red;
+
+            winLoseText.color = Color.white;
+            winLoseText.text = "Game Over!";
+            StartCoroutine(LoadScene(3));
+            //Debug.Log("Game Over!");
         }
     }
 
@@ -45,6 +54,15 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(move * speed);
     }
 
+    /// <summary> 
+    /// Coroutine to wait for a certain amount of second before reloading Scene.
+    /// </summary>
+    IEnumerator LoadScene(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        //reload scene after 3 seconds
+        SceneManager.LoadScene(0);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -60,7 +78,7 @@ public class PlayerController : MonoBehaviour
             SetScoreText();
 
             // Outpt Debug.Log()
-            //Debug.Log("Score: " + score);
+            // Debug.Log("Score: " + score);
         }
 
         if (other.tag == "Trap")
@@ -72,7 +90,14 @@ public class PlayerController : MonoBehaviour
 
         if (other.tag == "Goal")
         {
-            Debug.Log("You win!");
+            winLoseBG.gameObject.SetActive(true);
+            winLoseBG.color = Color.green;
+
+            winLoseText.color = Color.black;
+            winLoseText.text = "You win!";
+
+            StartCoroutine(LoadScene(3));
+            //Debug.Log("You win!");
         }
     }
 
